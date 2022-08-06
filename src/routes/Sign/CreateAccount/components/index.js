@@ -12,6 +12,7 @@ import messagesLogin from '../../Login/messages';
 import CreateDefault from './create_default';
 import InfoParent from './info_parent';
 import InfoChild from './info_child';
+import InfoProgress from './info_progress';
 import './index.less';
 const { Step } = Steps;
 
@@ -19,7 +20,7 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentStep: 0,
+      currentStep: 3,
     }
   }
 
@@ -72,10 +73,15 @@ export default class extends React.Component {
           {currentStep === 2 && <div className="steps-content">
             <InfoChild onContinueChild={this.handleContinue}/>
           </div>}
-          <Steps current={currentStep} progressDot>
-              <Step key='default' title={intl.formatMessage(messages.accountInfo)}/>
-              <Step key='info_parent' title={intl.formatMessage(messages.contactInfo)}/>
-              <Step key='info_child' title={intl.formatMessage(messages.dependentsInfo)}/>
+          {currentStep === 3 && <div className="steps-content">
+            <InfoProgress onContinueProgress={this.handleContinue}/>
+          </div>}
+          <Steps current={currentStep} responsive={false}>
+              <Step key='default' title={intl.formatMessage(messages.accountInfo)} icon={<p>1</p>}/>
+              <Step key='info_parent' title={intl.formatMessage(messages.contactInfo)} icon={<p>2</p>}/>
+              <Step key='info_child' title={intl.formatMessage(messages.dependentsInfo)} icon={<p>3</p>}/>
+              <Step key='info_progress' title={intl.formatMessage(messages.progessInfo)} icon={<p>4</p>}/>
+              <Step key='info_progress' title={intl.formatMessage(messages.progessInfo)} icon={<p>5</p>}/>
           </Steps>
           <div className="steps-action">
             

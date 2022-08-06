@@ -194,6 +194,70 @@ export default ({
     id: `${scope}.addDependent`,
     defaultMessage: 'Add dependent',
   },
+  remove: {
+    id: `${scope}.remove`,
+    defaultMessage: 'Remove',
+  },
+  academicInformation: {
+    id: `${scope}.academicInformation`,
+    defaultMessage: 'Academic information',
+  },
+  availability: {
+    id: `${scope}.availability`,
+    defaultMessage: 'Availability',
+  },
+  doHaveIEP: {
+    id: `${scope}.doHaveIEP`,
+    defaultMessage: 'Do they have an IEP?',
+  },
+  sameAllDependents: {
+    id: `${scope}.sameAllDependents`,
+    defaultMessage: 'Same for all dependents',
+  },
+  sunday: {
+    id: `${scope}.sunday`,
+    defaultMessage: 'Sunday',
+  },
+  monday: {
+    id: `${scope}.monday`,
+    defaultMessage: 'Monday',
+  },
+  tuesday: {
+    id: `${scope}.tuesday`,
+    defaultMessage: 'Tuesday',
+  },
+  wednesday: {
+    id: `${scope}.wednesday`,
+    defaultMessage: 'Wednesday',
+  },
+  thursday: {
+    id: `${scope}.thursday`,
+    defaultMessage: 'Thursday',
+  },
+  friday: {
+    id: `${scope}.friday`,
+    defaultMessage: 'Friday',
+  },
+  from: {
+    id: `${scope}.from`,
+    defaultMessage: 'From',
+  },
+  to: {
+    id: `${scope}.to`,
+    defaultMessage: '',
+  },
+  addTimeRange: {
+    id: `${scope}.addTimeRange`,
+    defaultMessage: 'Add time range',
+  },
+  copyFullWeek: {
+    id: `${scope}.copyFullWeek`,
+    defaultMessage: 'Copy to full week',
+  },
+  progessInfo: {
+    id: `${scope}.progessInfo`,
+    defaultMessage: 'Progess info',
+  },
   // : {
   //   id: `${scope}.`,
   //   defaultMessage: '',
