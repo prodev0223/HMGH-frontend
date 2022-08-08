@@ -1,7 +1,8 @@
 export const routerLinks = {
-  Register: '/register',
   Login: '/login',
   CreateAccount: '/createaccount',
+  SubsidyRequest: '/subsidyrequest',
+  SubsidyReview: '/subsidyreview',
   UIIcon: '/widget/icons',
 
   Pages403: '/widget/403',

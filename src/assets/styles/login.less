@@ -71,6 +71,13 @@
           color: @black06;
         }
       }
+      .ant-input-sm {
+        font-size: 12px;
+        color: @black87;
+        border-color: @gray250;
+        height: 24px;
+        
+      }
 
       .ant-input-affix-wrapper {
         padding: 0;
@@ -90,17 +97,25 @@
     textarea.ant-input {
       height: auto!important;
     }
+
+    &.input-download {
+      .ant-input-affix-wrapper { 
+        border-color: @gray250;
+        border-left: 0;
+      }
+      .ant-input-group-addon { 
+        background-color: @gray250;
+       }
+    }
+    &.bottom-0 {
+      margin-bottom: 0px;
+    }
   }
 
   .ant-form-item-with-help .ant-form-item-explain {
     margin: 5px 0 10px 0;
   }
 
-  .ant-form label {
-    font-size: 14px;
-    font-weight: 400;
-    color: @black;
-  }
   .ant-picker { 
     height: 40px;
     width: 100%;
@@ -134,10 +149,11 @@
       line-height: 40px;
     }
     &:not(.ant-select-customize-input) .ant-select-selector {
-      height: 40px;
+      min-height: 40px;
+      border: 1px solid @gray250
     }
-    
   }
+  
   .ant-select-multiple .ant-select-selection-item {
     height: 32px;
     line-height: 32px;
@@ -256,10 +272,105 @@
     max-width: 400px;
     margin: 60px auto 0 auto;
   }
+
+  .ant-form label {
+    font-size: 14px;
+    font-weight: 400;
+    color: @black;
+  }
 }
-.add-dependent-btn {
+
+.col-subsidy {
+  width: 400px;
+  margin-top: 50px;
+  .div-form-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    p {
+      width: calc(100% - 133px);
+      @media screen and (max-width: 576px) {
+        width: calc(100% - 110px);
+      }
+    }
+  }
+  .continue-btn {
+    margin-top: 60px;
+  }
+  .back-btn {
+    color: @primary-color-dark;
+    font-size: 18px;
+    padding: 4px 0;
+    margin-right: 5px;
+    &:hover,
+    &:active,
+    &:focus {
+      color: @primary-color;
+    }
+  }
+  .continue-btn {
+    margin-top: 30px;
+  }
+}
+.col-review-account {
+  width: 400px;
+  margin-top: 50px;
+  .review-item {
+    column-count: 2;
+  }
+  .review-item-3 {
+    column-count: 3;
+  }
+  .review-item-flex {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .item-flex {
+      width: 50%;
+    }
+  }
+  .continue-btn {
+    margin-top: 60px;
+  }
+}
+
+.col-subsidy-review {
+  width: 600px;
+  margin-top: 50px;
+  .review-item {
+    column-count: 2;
+  }
+  .div-review-btn {
+    width: 360px;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    .ant-btn {
+       margin: 20px 10px 0 10px;
+    }
+    .ant-btn-primary {
+      font-size: 14px;
+      font-weight: 400;
+      height: 38px;
+      line-height: 1.5;
+    }
+  }
+}
+
+.add-dependent-btn,
+.add-number-btn,
+.add-email-btn {
   color: @primary-color-dark;
   font-size: 18px;
+  &:hover,
+  &:active,
+  &:focus {
+    color: @primary-color;
+  }
+}
+.add-level-btn {
+  color: @primary-color-dark;
+  font-size: 16px;
   &:hover,
   &:active,
   &:focus {
@@ -380,10 +491,7 @@
       width: 140px;
       display: block;
       text-align: center;
-      padding-left: 60px;
-      @media screen and (max-width: 576px) {
-        padding-left: 30px;
-      }
+      margin-left: -60px;
 
       .ant-steps-item-title {
         font-size: 14px;
@@ -403,7 +511,7 @@
 }
 
 .steps-action {
-  max-width: 500px;
+  max-width: 430px;
   margin: auto;
   margin-bottom: 30px;
 
@@ -458,17 +566,74 @@
   margin-bottom: 15px;
 }
 .div-availability {
-  border: 1px solid @gray700;
-  border-radius: 8px;
   overflow: hidden;
   margin-left: -15px;
   margin-right: -15px;
+  margin-bottom: 15px;
+  
 
   .ant-segmented {
-    font-size: 10px!important;
-    .ant-form label {
-      font-size: 10px;
+    background-color: @white;
+    padding: 0;
+    border: 1px solid @primary-color-dark;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    label {
+      font-size: 10px!important;
       color: #000;
+    }
+    .ant-segmented-item {
+      
+      &-label {
+        min-height: 28px;
+        line-height: 28px;
+        margin: 0 6px;
+        padding: 0;
+        border-bottom: 2px solid @white;
+      }
+      &-selected {
+        background-color: @primary-color-dark;
+        border-radius: 0;
+        color: @white;
+      }
+    }
+
+    &-thumb {
+      background-color: @primary-color-dark;
+    }
+
+    &:not(.ant-segmented-disabled):hover, 
+    &:not(.ant-segmented-disabled):focus {
+      background-color: transparent;
+    }
+  }
+  .div-time {
+    border-bottom: 1px solid @gray700;
+    border-left: 1px solid @gray700;
+    border-right: 1px solid @gray700;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding: 15px 10px;
+
+    .div-add-time {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .div-copy-week {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      .anticon {
+        margin-left: 5px;
+        svg {
+          width: 13px;
+          height: 13px;
+        }
+      }
     }
   }
 }

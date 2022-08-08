@@ -12,9 +12,10 @@ import Page500 from './Pages/500';
 import Dashboard from './Dashboard';
 import Blank from './Blank';
 import Login from './Sign/Login';
-import Register from './Register';
 import Home from './ThemeDemo/Home';
 import CreateAccount from './Sign/CreateAccount';
+import SubsidyRequest from './Sign/SubsidyRequest';
+import SubsidyReview from './Sign/SubsidyReview';
 
 const routesConfig = app => [
   
@@ -28,7 +29,7 @@ const routesConfig = app => [
   //     Page500(), 
   //     Dashboard(app), 
   //     Blank(app),
-  //     // 💬 generate admin to here
+  //     
   //   ]
   // },
   // {
@@ -47,8 +48,10 @@ const routesConfig = app => [
     component: UserLayout,
     childRoutes: [
       Login(app), 
-      Register(app), 
       CreateAccount(app),
+      SubsidyRequest(app),
+      // 💬 generate admin to here
+      SubsidyReview(app),
       NotFound()]
   }
 ];
