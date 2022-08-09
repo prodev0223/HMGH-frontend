@@ -2,12 +2,4 @@ import modelEnhance from '../../../utils/modelEnhance';
 
 export default modelEnhance({
   namespace: 'dashboard',
-
-  state: {},
-
-  subscriptions: {},
-
-  effects: {},
-
-  reducers: {}
 });

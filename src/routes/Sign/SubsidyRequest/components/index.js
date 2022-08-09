@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'dva';
 import { Row, Col, Form, Button, Input, Select, Switch, Divider } from 'antd';
 import { BiChevronLeft } from 'react-icons/bi';
 import { Link } from 'dva/router';
@@ -10,13 +9,12 @@ import messagesCreateAccount from '../../CreateAccount/messages';
 import messagesLogin from '../../Login/messages';
 import './index.less';
 
-@connect()
 export default class extends React.Component {
-  onFinish = (values: any) => {
+  onFinish = (values) => {
     console.log('Success:', values);
   };
 
-  onFinishFailed = (errorInfo: any) => {
+  onFinishFailed = (errorInfo) => {
       console.log('Failed:', errorInfo);
   };
   render() {

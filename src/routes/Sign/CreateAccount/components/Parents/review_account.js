@@ -80,7 +80,7 @@ class ReviewAccount extends Component {
                             </div>
                         </div>
                        
-                        <Form.Item className="form-btn continue-btn" >
+                        <div className="form-btn continue-btn" >
                             <Button
                                 block
                                 type="primary"                                      
@@ -89,7 +89,7 @@ class ReviewAccount extends Component {
                             >
                                 {intl.formatMessage(messagesReview.submit).toUpperCase()}
                             </Button>
-                        </Form.Item>
+                        </div>
                     </div>
                     </Row>
             </Row>

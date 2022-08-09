@@ -406,6 +406,98 @@ export default ({
     id: `${scope}.publicProfile`,
     defaultMessage: 'Public profile',
   },
+  autoSyncCalendar: {
+    id: `${scope}.autoSyncCalendar`,
+    defaultMessage: 'Auto sync calendar',
+  },
+  manualSchedule: {
+    id: `${scope}.manualSchedule`,
+    defaultMessage: 'Manual schedule',
+  },
+  location: {
+    id: `${scope}.location`,
+    defaultMessage: 'Location',
+  },
+  privateHMGHAgents: {
+    id: `${scope}.privateHMGHAgents`,
+    defaultMessage: 'Private for HMGH agents only',
+  },
+  addRange: {
+    id: `${scope}.addRange`,
+    defaultMessage: 'Add range',
+  },
+  cancellationWindow: {
+    id: `${scope}.cancellationWindow`,
+    defaultMessage: 'Cancellation window',
+  },
+  cancellationFee: {
+    id: `${scope}.cancellationFee`,
+    defaultMessage: 'Cancellation fee',
+  },
+  availabilityInfo: {
+    id: `${scope}.availabilityInfo`,
+    defaultMessage: 'Availability info',
+  },
+  servicesOffered: {
+    id: `${scope}.servicesOffered`,
+    defaultMessage: 'Services offered',
+  },
+  subsidyProgram: {
+    id: `${scope}.subsidyProgram`,
+    defaultMessage: 'Subsidy Program',
+  },
+  offeringVolunteer: {
+    id: `${scope}.offeringVolunteer`,
+    defaultMessage: 'I’m offering pro bono/volunteer sessions',
+  },
+  numberSessionsWeek: {
+    id: `${scope}.numberSessionsWeek`,
+    defaultMessage: 'Number of pro bono sessions per week',
+  },
+  provideSubsidizedCases: {
+    id: `${scope}.provideSubsidizedCases`,
+    defaultMessage: 'I’m willing to provide a reduced rate for subsidized cases',
+  },
+  reduced: {
+    id: `${scope}.reduced`,
+    defaultMessage: 'Reduced',
+  },
+  openPrivateSlots: {
+    id: `${scope}.openPrivateSlots`,
+    defaultMessage: 'I’m willing to open private slots for HMGH referrals',
+  },
+  selectDateTime: {
+    id: `${scope}.selectDateTime`,
+    defaultMessage: 'Select a Date & Time',
+  },
+  timesAvailable : {
+    id: `${scope}.timesAvailable`,
+    defaultMessage: 'times you\'re available',
+  },
+  level: {
+    id: `${scope}.level`,
+    defaultMessage: 'Level',
+  },
+  subsidy: {
+    id: `${scope}.subsidy`,
+    defaultMessage: 'Subsidy',
+  },
+  providerInfo: {
+    id: `${scope}.providerInfo`,
+    defaultMessage: 'Provider info',
+  },
+  ratesInfo: {
+    id: `${scope}.ratesInfo`,
+    defaultMessage: 'Rates info',
+  },
+  subsidyOptions: {
+    id: `${scope}.subsidyOptions`,
+    defaultMessage: 'Subsidy options',
+  },
+  confirm: {
+    id: `${scope}.confirm`,
+    defaultMessage: 'Confirm',
+  },
   // : {
   //   id: `${scope}.`,
   //   defaultMessage: '',

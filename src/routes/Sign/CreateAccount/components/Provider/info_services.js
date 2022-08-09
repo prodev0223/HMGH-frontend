@@ -20,7 +20,7 @@ class InfoServices extends Component {
             <Row justify="center" className="row-form">
                 <div className='col-form col-info-parent'>
                 <div className='div-form-title'>
-                    <p className='font-30 text-center mb-10'>{intl.formatMessage(messages.tellYourself)}</p>
+                    <p className='font-30 text-center mb-10'>{intl.formatMessage(messages.servicesOffered)}</p>
                 </div>
                 <Form 
                     name="form_services_offered"
@@ -47,7 +47,7 @@ class InfoServices extends Component {
                                 name="ssn"
                                 rules={[{ required: true, message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + 'SSN' }]}
                             >
-                                <Input placeholder='SSN' suffix={<QuestionCircleOutlined className='text-primary'/>}/>
+                                <Input placeholder='SSN' suffix={<QuestionCircleOutlined className='text-primary icon-suffix'/>}/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -68,7 +68,7 @@ class InfoServices extends Component {
                             </Form.Item>
                         </Col>
                         <Col xs={8} sm={8} md={8}>
-                            <Form.Item className='bottom-0' name="rate">
+                            <Form.Item className='bottom-0' name="rate_large">
                                 <Select placeholder={intl.formatMessage(messages.rate)}>
                                     <Select.Option value='r1'>rate 1</Select.Option>
                                     <Select.Option value='r2'>rate 2</Select.Option>
@@ -76,10 +76,10 @@ class InfoServices extends Component {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <div className='text-center flex flex-row justify-between'>
+                    <div className='text-center flex flex-row justify-between my-10'>
                         <Button
                             type="text" 
-                            className='add-level-btn mb-10'     
+                            className='add-level-btn'     
                             icon={<BsPlusCircle size={17} className='mr-5'/>}                                
                         >
                             {intl.formatMessage(messages.addLevel)}
@@ -91,14 +91,14 @@ class InfoServices extends Component {
                         </div>
                     </div>
                     <div className='text-center flex flex-row justify-between'>
-                        <div className='flex flex-row items-center'>
+                        <div className='flex flex-row items-center mb-10'>
                             <Switch size="small" defaultChecked />
                             <p className='ml-10 mb-0'>{intl.formatMessage(messages.separateEvaluation)}</p>
                         </div>
-                        <Form.Item name="rate">
-                            <Select className='select-small' placeholder={intl.formatMessage(messages.rate)}>
-                                <Select.Option value='r1'>rate 1</Select.Option>
-                                <Select.Option value='r2'>rate 2</Select.Option>
+                        <Form.Item name="rate_small" className='select-small'>
+                            <Select placeholder={intl.formatMessage(messages.rate)}>
+                                <Select.Option value='rate1'>rate 1</Select.Option>
+                                <Select.Option value='rate2'>rate 2</Select.Option>
                             </Select>
                         </Form.Item>
                     </div>
@@ -117,11 +117,11 @@ class InfoServices extends Component {
                         <p className='ml-10 mb-0'>{intl.formatMessage(messages.receiptsRequest)}</p>
                     </div>
                     <div className='text-center flex flex-row justify-between'>
-                        <div className='flex flex-row items-center'>
+                        <div className='flex flex-row items-center mb-10'>
                             <Switch size="small" defaultChecked />
                             <p className='ml-10 mb-0'>{intl.formatMessage(messages.newClient)}</p>
                         </div>
-                        <Form.Item size='small' name="screening_time">
+                        <Form.Item size='small' name="screening_time"  className='select-small'>
                             <Select placeholder={intl.formatMessage(messages.screeningTime)}>
                                 <Select.Option value='t1'>1 minute</Select.Option>
                                 <Select.Option value='t2'>2 minutes</Select.Option>

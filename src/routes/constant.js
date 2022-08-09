@@ -3,12 +3,16 @@ export const routerLinks = {
   CreateAccount: '/createaccount',
   SubsidyRequest: '/subsidyrequest',
   SubsidyReview: '/subsidyreview',
-  UIIcon: '/widget/icons',
+  InfoSchool: '/infoschool',
+  InfoAdmin: '/infoadmin',
+
+  Dashboard: '/account/dashboard',
+
 
   Pages403: '/widget/403',
   Pages404: '/widget/404',
   Pages500: '/widget/500',
-  Dashboard: '/administrator/dashboard',
   Blank: '/widget/blank',
-  Home: '/home/home'
+  Home: '/home/home',
+  // Dashboard: '/administrator/dashboard'
 };

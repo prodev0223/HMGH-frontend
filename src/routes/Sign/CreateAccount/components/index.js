@@ -11,6 +11,9 @@ import ReviewAccount from './Parents/review_account';
 
 import InfoProfile from './Provider/info_profile';
 import InfoServices from './Provider/info_services';
+import InfoAvailability from './Provider/info_availability';
+import SubsidyProgram from './Provider/subsidy_program';
+import InfoReview from './Provider/info_review';
 import { ModalCreateDone } from '../../../../components/Modal';
 import './index.less';
 const { Step } = Steps;
@@ -39,11 +42,12 @@ export default class extends React.Component {
     // } else {
     //   this.openModalCreateDone();
     // }
-    if(this.state.currentStep <= 3) {
+    if(this.state.currentStep <= 4) {
       this.nextStep();
-    } else {
-      window.location.href="/login";
-    }
+    } 
+    // else {
+    //   window.location.href="/login";
+    // }
   }
   openModalCreateDone = () => {
     this.setState({ visibleCreateDone: true });
@@ -75,22 +79,30 @@ export default class extends React.Component {
             <InfoServices onContinueServices={this.handleContinue}/>
           </div>}
           {currentStep === 3 && <div className="steps-content">
-            <InfoProgress onContinueProgress={this.handleContinue}/>
+            {/* <InfoProgress onContinueProgress={this.handleContinue}/> */}
+            <InfoAvailability onContinueAvailability={this.handleContinue}/>
           </div>}
           {currentStep === 4 && <div className="steps-content">
-            <ReviewAccount onContinueReview={this.handleContinue}/>
+            {/* <ReviewAccount onContinueReview={this.handleContinue}/> */}
+            <SubsidyProgram onContinueProgram={this.handleContinue}/>
           </div>}
-          <Steps current={currentStep} responsive={false}>
+          {currentStep === 5 && <div className="steps-content">
+            <InfoReview onContinueReview={this.handleContinue}/>
+          </div>}
+          {/* <Steps current={currentStep} responsive={false} style={{maxWidth: 500}}
               <Step key='default' title={intl.formatMessage(messages.accountInfo)} icon={<p>1</p>}/>
-              {/* <Step key='info_parent' title={intl.formatMessage(messages.contactInfo)} icon={<p>2</p>}/>
+              <Step key='info_parent' title={intl.formatMessage(messages.contactInfo)} icon={<p>2</p>}/>
               <Step key='info_child' title={intl.formatMessage(messages.dependentsInfo)} icon={<p>3</p>}/>
               <Step key='info_progress' title={intl.formatMessage(messages.progessInfo)} icon={<p>4</p>}/>
-              <Step key='review_info' title={intl.formatMessage(messages.reviewInfo)} icon={<p>5</p>}/> */}
-
+              <Step key='review_info' title={intl.formatMessage(messages.reviewInfo)} icon={<p>5</p>}/>
+          </Steps> */}
+          <Steps current={currentStep} responsive={false} style={{maxWidth: 600}}>
+              <Step key='default' title={intl.formatMessage(messages.accountInfo)} icon={<p>1</p>}/>
               <Step key='info_profile' title={intl.formatMessage(messages.profileInfo)} icon={<p>2</p>}/>
               <Step key='info_services' title={intl.formatMessage(messages.servicesInfo)} icon={<p>3</p>}/>
-              <Step key='info_progress' title={intl.formatMessage(messages.progessInfo)} icon={<p>4</p>}/>
-              <Step key='review_info' title={intl.formatMessage(messages.reviewInfo)} icon={<p>5</p>}/>
+              <Step key='info_availability' title={intl.formatMessage(messages.availabilityInfo)} icon={<p>4</p>}/>
+              <Step key='subsidy' title={intl.formatMessage(messages.subsidy)} icon={<p>5</p>}/>
+              <Step key='info_review' title={intl.formatMessage(messages.reviewInfo)} icon={<p>6</p>}/>
           </Steps>
           <div className="steps-action">
             
