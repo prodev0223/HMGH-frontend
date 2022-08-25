@@ -4,6 +4,10 @@ import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
 import intl from 'react-intl-universal';
 import messages from '../../messages';
 import messagesLogin from '../../../Login/messages';
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { setProvider } from '../../../../../redux/features/registerSlice';
+
 class InfoProfile extends Component {
     constructor(props) {
         super(props);
@@ -14,16 +18,32 @@ class InfoProfile extends Component {
             email_contact: [
                 { email: "Email 1" },
             ],
+            // infor_profile: 
         }
     }
+
+
+    componentDidMount() {
+        const data = this.props.register.provider;
+        if (data) {
+            this.form?.setFieldsValue({
+                ...data?.step2
+            })
+        }
+    }
+
     onFinish = (values) => {
         console.log('Success:', values);
+        this.props.setProvider({
+            step2: values,
+        });
         this.props.onContinue();
     };
 
     onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+
     render() {
         return (
             <Row justify="center" className="row-form">
@@ -39,6 +59,11 @@ class InfoProfile extends Component {
                             phone: this.state.phone_contact,
                             email: this.state.email_contact,
                         }}
+                        ref={ref => this.form = ref}
+
+                    // onValuesChange={(changedValues, allValues) => {
+                    //     console.log(changedValues, allValues);
+                    // }}
                     >
                         <Form.Item
                             name="legal_name"
@@ -198,7 +223,7 @@ class InfoProfile extends Component {
                                 block
                                 type="primary"
                                 htmlType="submit"
-                                // onClick={this.props.onContinue}
+                            // onClick={this.props.onContinue}
                             >
                                 {intl.formatMessage(messages.continue).toUpperCase()}
                             </Button>
@@ -209,4 +234,8 @@ class InfoProfile extends Component {
         );
     }
 }
-export default InfoProfile;
+
+const mapStateToProps = state => ({
+    register: state.register,
+})
+export default compose(connect(mapStateToProps, { setProvider }))(InfoProfile);

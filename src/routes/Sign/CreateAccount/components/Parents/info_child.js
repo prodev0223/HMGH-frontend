@@ -20,6 +20,7 @@ class InfoChild extends Component {
             formChild: [
                 { children: "Dependent 1" },
             ],
+            isTypeFull: false,
         }
     }
 
@@ -33,6 +34,36 @@ class InfoChild extends Component {
     onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+
+    checkTypeFull = (changedValues, allValues) => {
+        console.log(changedValues, allValues);
+        const length = allValues.children.length;
+
+        if (length === 1) {
+            let data = allValues.children[0];
+            data = Object.values(data);
+            data = data.filter(item => item !== "");
+            if (data && data.length === 9) {
+                this.setState({
+                    isTypeFull: true,
+                })
+            }
+            else {
+                this.setState({
+                    isTypeFull: false,
+                })
+            }
+        }
+        else {
+            
+
+            delete allValues.children[0];
+            let data = allValues.children;
+            data = Object.values(data);
+
+        }
+
+    }
 
     render() {
 
@@ -51,6 +82,8 @@ class InfoChild extends Component {
                             children: this.props.parentStep3 || this.state.formChild,
                         }}
                         ref={ref => this.form = ref}
+                        onValuesChange={this.checkTypeFull}
+
                     >
                         <Form.List name="children">
                             {(fields, { add, remove }) => (
@@ -180,7 +213,9 @@ class InfoChild extends Component {
                                                         </Select>
                                                     </Form.Item>
                                                     <Link to={routerLinks['SubsidyRequest']}>
-                                                        <Button className='ml-10'>{intl.formatMessage(messages.subsidyRequest)}</Button>
+                                                        <Button className='ml-10' disabled={
+                                                            this.state.isTypeFull ? false : true
+                                                        }>{intl.formatMessage(messages.subsidyRequest)}</Button>
                                                     </Link>
                                                 </div>
                                             </div>

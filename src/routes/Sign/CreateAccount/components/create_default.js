@@ -34,7 +34,7 @@ class CreateDefault extends Component {
     componentDidMount() {
 
 
-        const { step1 } = this.props.register.parent;
+        let data = this.props.register.parent;
 
         // this.form?.setFieldsValue({
         //     username: 'username',
@@ -43,12 +43,12 @@ class CreateDefault extends Component {
         //     account_type: intl.formatMessage(messages.parent),
         // });
 
-        this.form?.setFieldsValue({
-            username: step1?.username,
-            email: step1?.email,
-            password: step1?.password,
-            account_type: step1?.account_type,
-        });
+        if (data) {
+            const { step1 } = data;
+            this.form?.setFieldsValue({
+                ...step1
+            });
+        }
     }
 
 
