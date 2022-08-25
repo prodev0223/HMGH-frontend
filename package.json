@@ -27,6 +27,7 @@
     "@reduxjs/toolkit": "^1.8.4",
     "animate.css": "^3.7.2",
     "antd": "^4.6.6",
+    "axios": "^0.27.2",
     "bluebird": "^3.7.2",
     "classnames": "^2.2.6",
     "cmn-utils": "^1.0.9",

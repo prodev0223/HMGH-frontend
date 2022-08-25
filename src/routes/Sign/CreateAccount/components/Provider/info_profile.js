@@ -7,6 +7,8 @@ import messagesLogin from '../../../Login/messages';
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { setProvider } from '../../../../../redux/features/registerSlice';
+import PlacesAutocomplete from 'react-places-autocomplete';
+
 
 class InfoProfile extends Component {
     constructor(props) {
@@ -19,6 +21,8 @@ class InfoProfile extends Component {
                 { email: "Email 1" },
             ],
             // infor_profile: 
+            service_address: '',
+            billing_address: ''
         }
     }
 
@@ -58,12 +62,10 @@ class InfoProfile extends Component {
                         initialValues={{
                             phone: this.state.phone_contact,
                             email: this.state.email_contact,
+                            service_address: "Chicago, Illinois, Hoa Kỳ",
+                            billing_address: "Chicago, Illinois, Hoa Kỳ",
                         }}
                         ref={ref => this.form = ref}
-
-                    // onValuesChange={(changedValues, allValues) => {
-                    //     console.log(changedValues, allValues);
-                    // }}
                     >
                         <Form.Item
                             name="legal_name"
@@ -81,19 +83,87 @@ class InfoProfile extends Component {
                             name="service_address"
                             rules={[{ required: true, message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messages.serviceAddress) }]}
                         >
-                            <Select placeholder={intl.formatMessage(messages.serviceAddress)}>
-                                <Select.Option value='a1'>address 1</Select.Option>
-                                <Select.Option value='a2'>address 2</Select.Option>
-                            </Select>
+                            <PlacesAutocomplete
+                                value={this.state.service_address}
+                                onChange={(e) => this.setState({ service_address: e })}
+                                onSelect={(e) => this.form?.setFieldsValue({ service_address: e })}
+                            >
+                                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                                    <div>
+                                        <Input {...getInputProps({
+                                            placeholder: 'Service Address',
+                                            className: 'location-search-input',
+                                        })} />
+                                        <div className="autocomplete-dropdown-container">
+                                            {loading && <div>Loading...</div>}
+                                            {suggestions.map(suggestion => {
+                                                const className = suggestion.active
+                                                    ? 'suggestion-item--active'
+                                                    : 'suggestion-item';
+                                                // inline style for demonstration purpose
+                                                const style = suggestion.active
+                                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                                return (
+                                                    <div
+                                                        {...getSuggestionItemProps(suggestion, {
+                                                            className,
+                                                            style,
+                                                        })}
+                                                    >
+                                                        <span>{suggestion.description}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </PlacesAutocomplete>
                         </Form.Item>
                         <Form.Item
                             name="billing_address"
                             rules={[{ required: true, message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messages.billingAddress) }]}
                         >
-                            <Select placeholder={intl.formatMessage(messages.billingAddress)}>
+                            <PlacesAutocomplete
+                                value={this.state.billing_address}
+                                onChange={(e) => this.setState({ billing_address: e })}
+                                onSelect={(e) => this.form?.setFieldsValue({ billing_address: e })}
+                            >
+                                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                                    <div>
+                                        <Input {...getInputProps({
+                                            placeholder: 'Billing Address',
+                                            className: 'location-search-input',
+                                        })} />
+                                        <div className="autocomplete-dropdown-container">
+                                            {loading && <div>Loading...</div>}
+                                            {suggestions.map(suggestion => {
+                                                const className = suggestion.active
+                                                    ? 'suggestion-item--active'
+                                                    : 'suggestion-item';
+                                                // inline style for demonstration purpose
+                                                const style = suggestion.active
+                                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                                return (
+                                                    <div
+                                                        {...getSuggestionItemProps(suggestion, {
+                                                            className,
+                                                            style,
+                                                        })}
+                                                    >
+                                                        <span>{suggestion.description}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </PlacesAutocomplete>
+                            {/* <Select placeholder={intl.formatMessage(messages.billingAddress)}>
                                 <Select.Option value='a1'>address 1</Select.Option>
                                 <Select.Option value='a2'>address 2</Select.Option>
-                            </Select>
+                            </Select> */}
                         </Form.Item>
                         <Form.Item
                             name="city_connections"
@@ -126,9 +196,18 @@ class InfoProfile extends Component {
                                                 <Form.Item
                                                     {...restField}
                                                     name={[name, 'contact_num']}
-                                                    rules={[{ required: true, message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messages.contactNumber) }]}
                                                     className='bottom-0'
                                                     style={{ marginTop: key === 0 ? 0 : 14 }}
+                                                    rules={[
+                                                        { required: true, 
+                                                            message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messages.contactNumber)
+                                                        },
+                                                        {
+                                                            pattern: '^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$',
+                                                            message: intl.formatMessage(messages.phoneNumberValid)
+                                                        },
+                                                    ]}
+                                                    
                                                 >
                                                     <Input placeholder={intl.formatMessage(messages.contactNumber)} />
                                                 </Form.Item>
@@ -173,9 +252,19 @@ class InfoProfile extends Component {
                                                 <Form.Item
                                                     {...restField}
                                                     name={[name, 'contact_email']}
-                                                    rules={[{ required: true, message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messages.contactEmail) }]}
                                                     className='bottom-0'
                                                     style={{ marginTop: key === 0 ? 0 : 14 }}
+                                                    rules={[
+                                                        { 
+                                                            required: true, 
+                                                            message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messages.contactEmail) 
+                                                        },
+                                                        {
+                                                            type: 'email',
+                                                            message: intl.formatMessage(messagesLogin.emailNotValid)
+                                                        }
+                                                    ]}
+
                                                 >
                                                     <Input placeholder={intl.formatMessage(messages.contactEmail)} />
                                                 </Form.Item>

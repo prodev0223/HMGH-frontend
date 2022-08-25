@@ -23,6 +23,7 @@ export default class extends React.Component {
                 { student: "Dependent 1" },
             ],
             shool_detail: localStorage.getItem('school_detail') ? JSON.parse(localStorage.getItem('school_detail')) : '',
+            school_address:''
         }
     }
 
@@ -51,6 +52,23 @@ export default class extends React.Component {
     onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+
+    handleChange = school_address => {
+        this.setState({ school_address });
+    };
+
+    handleSelect = school_address => {
+        console.log(school_address);
+        this.form.setFieldsValue({
+            school_address
+        })
+        // geocodeByAddress(address)
+        //     .then(results => getLatLng(results[0]))
+        //     .then(latLng => console.log('Success', latLng))
+        //     .catch(error => console.error('Error', error));
+    };
+
+
     render() {
         const day_week = [
             intl.formatMessage(messages.sunday),
@@ -70,6 +88,7 @@ export default class extends React.Component {
                         initialValues={{
                             technical: this.state?.shool_detail?.technical || this.state.technical_contact,
                             student: this.state?.shool_detail?.student || this.state.student_contact,
+                            school_address : 'Chicago, Illinois, Hoa Kỳ'
                         }}
                         ref={(ref) => { this.form = ref }}
                     >
