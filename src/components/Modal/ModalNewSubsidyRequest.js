@@ -7,15 +7,61 @@ import messagesCreateAccount from '../../routes/Sign/CreateAccount/messages';
 import messagesLogin from '../../routes/Sign/Login/messages';
 import messagesRequest from '../../routes/Sign/SubsidyRequest/messages';
 import './style/index.less';
-
+import request,{generateSearchStructure} from '../../utils/api/request'
 class ModalNewSubsidyRequest extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             fileList: [],
             uploading: false,
-            listDenpendent: localStorage.getItem('inforChildren') ? JSON.parse(localStorage.getItem('inforChildren')) : [],
+            SkillSet:[],
+            listSchools:[],
         }
+    }
+
+    componentDidMount = () =>{
+        this.props.setOpennedEvent(this.loadData)
+    }
+
+    loadData = () =>{
+        console.log('new subsidy loaded data' , this.props.listDependents)
+        this.loadSchools();
+        this.loadDataFromServer();
+    }
+
+    loadDataFromServer(){
+        request.post( 'clients/get_default_value_for_client'
+            ).then(result=>{
+                console.log('get_default_value_for_client',result.data);
+                if(result.data.success){
+                    var data = result.data.data;
+                    this.setState({SkillSet:data.SkillSet})
+                }else{
+                    
+                    
+                }
+                
+            }).catch(err=>{
+                console.log(err);
+                
+            })
+      }
+
+    loadSchools() {
+        request.post( 'clients/get_all_schools'
+        ).then(result => {
+            console.log('get_default_value_for_client', result.data);
+            if (result.data.success) {
+                var data = result.data.data;
+                this.setState({ listSchools: data })
+            } else {
+                
+    
+            }
+    
+        }).catch(err => {
+            console.log(err);
+        })
     }
 
     onFinish = (values) => {
@@ -92,7 +138,7 @@ class ModalNewSubsidyRequest extends React.Component {
                             onFinishFailed={this.onFinishFailed}
                             ref={ref => this.form = ref}
                         >
-                            <Form.Item name="dependent"
+                            <Form.Item name="student"
                                 rules=
                                 {[{
                                     required: true,
@@ -100,9 +146,9 @@ class ModalNewSubsidyRequest extends React.Component {
                                 }]}
                             >
                                 <Select placeholder={intl.formatMessage(messagesCreateAccount.dependent)}>
-                                    {this.state.listDenpendent.map((item, index) => {
+                                    {this.props.listDenpendent!=undefined&& this.props.listDependents.length>0 &&this.props.listDependents.map((item, index) => {
                                         return (
-                                            <Select.Option key={index} value={++index}>Dependent {index}</Select.Option>
+                                            <Select.Option key={index} value={item._id}>{item.firstName} {item.lastName}</Select.Option>
                                         )
                                     })}
                                 </Select>
@@ -113,8 +159,7 @@ class ModalNewSubsidyRequest extends React.Component {
                                     message: intl.formatMessage(messagesLogin.pleaseEnter) + ' ' + intl.formatMessage(messagesRequest.skillsetRequested)
                                 }]}>
                                 <Select placeholder={intl.formatMessage(messagesRequest.skillsetRequested)}>
-                                    <Select.Option value='1'>Skill 1</Select.Option>
-                                    <Select.Option value='2'>Skill 2</Select.Option>
+                                    {this.state.SkillSet.map((skill, index)=>  <Select.Option value={index}>{skill}</Select.Option>)}
                                 </Select>
                             </Form.Item>
                             <Form.Item name="school" rules=

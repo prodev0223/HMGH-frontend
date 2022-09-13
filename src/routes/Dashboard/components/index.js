@@ -59,6 +59,7 @@ import {store} from '../../../redux/store'
 
 import { routerLinks } from "../../constant";
 import PanelAppointment from './PanelAppointment';
+import PanelSubsidaries from './PanelSubsidaries';
 
 export default class extends React.Component {
   constructor(props) {
@@ -87,7 +88,9 @@ export default class extends React.Component {
       listAppoinmentsRecent:[],
       listAppoinmentsFilter:[],
       SkillSet:[],
+      isEditSubsidyRequest:"",
     }
+    // this.panelSubsidariesRef = React.forwardRef();
   }
   componentDidMount(){
     if(!!localStorage.getItem('token')&&localStorage.getItem('token').length >0){
@@ -248,6 +251,24 @@ export default class extends React.Component {
     return (<ModalSubsidyProgress {...modalSubsidyProps} />)
   }
 
+  modalCreateAndEditSubsidyRequest = ()=>{
+    
+    const modalNewSubsidyProps = {
+      visible: this.state.visibleNewSubsidy,
+      onSubmit: this.onCloseModalNewSubsidy,
+      onCancel: this.onCloseModalNewSubsidy,
+      isEditSubsidyRequest: this.state.isEditSubsidyRequest,
+      
+    };
+    return <ModalNewSubsidyRequest {...modalNewSubsidyProps}
+    setOpennedEvent={opennedEvent=>{
+      this.openNewSubsidyRequest = opennedEvent;
+    }}
+    userRole={this.state.userRole}
+    listDependents = {this.state.listDependents}
+    />
+  }
+
   calendarRef = React.createRef();
 
   onShowFilter = () => {
@@ -301,6 +322,7 @@ export default class extends React.Component {
   };
   onShowModalNewSubsidy = () => {
     this.setState({ visibleNewSubsidy: true });
+    this.openNewSubsidyRequest();
   };
 
   onCloseModalNewSubsidy = () => {
@@ -422,6 +444,13 @@ export default class extends React.Component {
 
   }
 
+  onCollapseChange = (v=>{
+    
+    if(v.length>0&& v[v.length-1] == 6){
+      this.panelSubsidariesReload&&this.panelSubsidariesReload();
+    }
+  })
+
   renderListAppoinmentsRecent = (appoinment , index)=>{
       
     return ( <div key={index} className={appoinment.status ==-1 || appoinment.status ==2?'item-feed done': 'item-feed'}>
@@ -462,6 +491,29 @@ export default class extends React.Component {
         userRole={this.state.userRole}
       />
     </Panel>);
+  }
+
+  renderPanelSubsidaries = ()=>{
+    return (
+      <Panel
+                header={<div className='flex flex-row justify-between'>
+                  <p className='mb-0'>{intl.formatMessage(messages.subsidaries)}</p>
+                  {this.state.userRole == 3 &&<Button type='primary' size='small' onClick={this.onShowModalNewSubsidy}>
+                    {intl.formatMessage(messages.requestNewSubsidy).toUpperCase()}
+                  </Button>}
+                </div>
+                }
+                key="6"
+                className='subsidaries-panel'
+              >
+                <PanelSubsidaries
+                  setReload={reload=>{
+                    this.panelSubsidariesReload = reload;
+                  }}
+                  userRole={this.state.userRole}
+                />
+              </Panel>
+    )
   }
  
   render() {
@@ -595,11 +647,7 @@ export default class extends React.Component {
       onSubmit: this.onCloseModalReferral,
       onCancel: this.onCloseModalReferral,
     };
-    const modalNewSubsidyProps = {
-      visible: visibleNewSubsidy,
-      onSubmit: this.onCloseModalNewSubsidy,
-      onCancel: this.onCloseModalNewSubsidy,
-    };
+    
     return (
       <div className="full-layout page dashboard-page">
         <div className='div-show-subsidy' onClick={this.onShowModalSubsidy} />
@@ -724,6 +772,7 @@ export default class extends React.Component {
               defaultActiveKey={['1']}
               expandIcon={({ isActive }) => isActive ? <BsFillDashSquareFill size={18} /> : <BsFillPlusSquareFill size={18} />}
               expandIconPosition={'end'}
+              onChange={this.onCollapseChange}
             >
               {this.renderPanelAppointmentForProvider()}
               <Panel header={intl.formatMessage(messages.referrals)} key="2">
@@ -802,76 +851,8 @@ export default class extends React.Component {
                   </div>
                 )}
               </Panel>
-              <Panel
-                header={<div className='flex flex-row justify-between'>
-                  <p className='mb-0'>{intl.formatMessage(messages.subsidaries)}</p>
-                  <Button type='primary' size='small' onClick={this.onShowModalNewSubsidy}>
-                    {intl.formatMessage(messages.requestNewSubsidy).toUpperCase()}
-                  </Button>
-                </div>}
-                key="6"
-                className='subsidaries-panel'
-              >
-                <Tabs defaultActiveKey="1" type="card" size='small'>
-                  <TabPane tab={intl.formatMessage(messages.pending)} key="1">
-                    {new Array(10).fill(null).map((_, index) =>
-                      <div key={index} className='list-item'>
-                        <div className='item-left'>
-                          <Avatar size={24} icon={<FaUser size={12} />} onClick={this.onShowDrawerDetail} />
-                          <div className='div-service'>
-                            <p className='font-11 mb-0'>Service Type</p>
-                            <p className='font-09 mb-0'>Provide Name</p>
-                          </div>
-                          <p className='font-11 mb-0 ml-auto mr-5'>Case Handler</p>
-                          <p className='font-12 ml-auto mb-0'>Status</p>
-                        </div>
-                        <div className='item-right'>
-                          <GiBackwardTime size={19} onClick={() => { }} />
-                          <BsXCircle style={{ marginTop: 4 }} size={15} onClick={() => { }} />
-                        </div>
-                      </div>
-                    )}
-                  </TabPane>
-                  <TabPane tab={intl.formatMessage(messages.declined)} key="2">
-                    {new Array(10).fill(null).map((_, index) =>
-                      <div key={index} className='list-item'>
-                        <div className='item-left'>
-                          <Avatar size={24} icon={<FaUser size={12} />} onClick={this.onShowDrawerDetail} />
-                          <div className='div-service'>
-                            <p className='font-11 mb-0'>Service Type</p>
-                            <p className='font-09 mb-0'>Provide Name</p>
-                          </div>
-                          <p className='font-11 mb-0 ml-auto mr-5'>Case Handler</p>
-                          <p className='font-12 ml-auto mb-0'>Status</p>
-                        </div>
-                        <div className='item-right'>
-                          <BsFillFlagFill size={15} onClick={() => { }} />
-                          <BsCheckCircleFill className='text-green500' style={{ marginTop: 4 }} size={15} onClick={() => { }} />
-                        </div>
-                      </div>
-                    )}
-                  </TabPane>
-                  <TabPane tab={intl.formatMessage(messages.approved)} key="3">
-                    {new Array(10).fill(null).map((_, index) =>
-                      <div key={index} className='list-item'>
-                        <div className='item-left'>
-                          <Avatar size={24} icon={<FaUser size={12} />} onClick={this.onShowDrawerDetail} />
-                          <div className='div-service'>
-                            <p className='font-11 mb-0'>Service Type</p>
-                            <p className='font-09 mb-0'>Provide Name</p>
-                          </div>
-                          <p className='font-11 mb-0 ml-auto mr-5'>Case Handler</p>
-                          <p className='font-12 ml-auto mb-0'>Status</p>
-                        </div>
-                        <div className='item-right'>
-                          <BsEnvelope size={15} onClick={() => { }} />
-                          <BsFillFlagFill style={{ marginTop: 4 }} size={15} onClick={() => { }} />
-                        </div>
-                      </div>
-                    )}
-                  </TabPane>
-                </Tabs>
-              </Panel>
+              {this.renderPanelSubsidaries()}
+              
             </Collapse>
           </section>
         </div>
@@ -894,7 +875,7 @@ export default class extends React.Component {
         
         <ModalSubsidyProgress {...modalSubsidyProps}/>
         <ModalReferralService {...modalReferralServiceProps}/>
-        <ModalNewSubsidyRequest {...modalNewSubsidyProps}/>
+        {this.modalCreateAndEditSubsidyRequest()}
       </div>
     );
   }
