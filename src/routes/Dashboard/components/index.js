@@ -19,7 +19,13 @@ import { FaUser, FaCalendarAlt } from 'react-icons/fa';
 import { GiBackwardTime } from 'react-icons/gi';
 import { MdFormatAlignLeft } from 'react-icons/md';
 import { BsEnvelope, BsFilter, BsXCircle, BsX, BsFillDashSquareFill, BsFillPlusSquareFill, BsClockHistory, BsFillFlagFill, BsCheckCircleFill } from 'react-icons/bs';
-import { ModalNewAppointment,ModalNewAppointmentForParents, ModalSubsidyProgress ,ModalReferralService} from '../../../components/Modal';
+import { 
+  ModalNewAppointment,
+  ModalNewAppointmentForParents, 
+  ModalSubsidyProgress,
+  ModalReferralService,
+  ModalNewSubsidyRequest
+} from '../../../components/Modal';
 
 import CSSAnimate from '../../../components/CSSAnimate';
 import DrawerDetail from '../../../components/DrawerDetail';
@@ -65,6 +71,7 @@ export default class extends React.Component {
       visibleNewAppoint: false,
       visibleSubsidy: false,
       visiblReferralService: false,
+      visibleNewSubsidy: false,
       isEventDetail: false,
       idEvent:0,
       isMonth: 1,
@@ -292,6 +299,13 @@ export default class extends React.Component {
   onCloseModalReferral = () => {
     this.setState({ visiblReferralService: false });
   };
+  onShowModalNewSubsidy = () => {
+    this.setState({ visibleNewSubsidy: true });
+  };
+
+  onCloseModalNewSubsidy = () => {
+    this.setState({ visibleNewSubsidy: false });
+  };
 
   handleDateClick = arg => {
     // eslint-disable-next-line no-restricted-globals
@@ -460,7 +474,8 @@ export default class extends React.Component {
       visiblReferralService,
       isEventDetail,
       isMonth,
-      isGridDayView
+      isGridDayView,
+      visibleNewSubsidy
     } = this.state;
     
     const btnMonthToWeek = (
@@ -579,6 +594,11 @@ export default class extends React.Component {
       visible: visiblReferralService,
       onSubmit: this.onCloseModalReferral,
       onCancel: this.onCloseModalReferral,
+    };
+    const modalNewSubsidyProps = {
+      visible: visibleNewSubsidy,
+      onSubmit: this.onCloseModalNewSubsidy,
+      onCancel: this.onCloseModalNewSubsidy,
     };
     return (
       <div className="full-layout page dashboard-page">
@@ -783,7 +803,12 @@ export default class extends React.Component {
                 )}
               </Panel>
               <Panel
-                header={intl.formatMessage(messages.subsidaries)}
+                header={<div className='flex flex-row justify-between'>
+                  <p className='mb-0'>{intl.formatMessage(messages.subsidaries)}</p>
+                  <Button type='primary' size='small' onClick={this.onShowModalNewSubsidy}>
+                    {intl.formatMessage(messages.requestNewSubsidy).toUpperCase()}
+                  </Button>
+                </div>}
                 key="6"
                 className='subsidaries-panel'
               >
@@ -869,6 +894,7 @@ export default class extends React.Component {
         
         <ModalSubsidyProgress {...modalSubsidyProps}/>
         <ModalReferralService {...modalReferralServiceProps}/>
+        <ModalNewSubsidyRequest {...modalNewSubsidyProps}/>
       </div>
     );
   }
