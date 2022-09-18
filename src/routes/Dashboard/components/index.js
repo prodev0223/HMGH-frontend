@@ -13,7 +13,8 @@ import {
   Col,
   Checkbox,
   Select,
-  message
+  message,
+  notification 
 } from 'antd';
 import { FaUser, FaCalendarAlt } from 'react-icons/fa';
 import { GiBackwardTime } from 'react-icons/gi';
@@ -179,6 +180,30 @@ export default class extends React.Component {
     
   }
 
+  showNotificationForSubsidy(data){
+    notification.open({
+      message: 'You have new Subsidy',
+      description:
+        'A parent has sent 1 subsidy request, press for view.',
+      onClick: () => {
+        console.log('Notification Clicked!');
+        this.onShowModalSubsidy(data.data._id );
+      },
+    });
+  }
+
+  showNotificationForSubsidyChange(data){
+    notification.open({
+      message: 'Subsidy Status changed',
+      description:
+        'Press for check subsidy progress.',
+      onClick: () => {
+        console.log('Notification Clicked!');
+        this.onShowModalSubsidy(data );
+      },
+    });
+  }
+
   handleSocketResult(data){
     switch(data.key){
       case 'new_appoint_from_client':
@@ -186,7 +211,12 @@ export default class extends React.Component {
         return;
         case 'new_subsidy_request_from_client':
           this.panelSubsidariesReload&&typeof this.panelSubsidariesReload == 'function'&&this.panelSubsidariesReload(true)
+          this.showNotificationForSubsidy(data);
           return;
+      case  'subsidy_change_status':
+        this.panelSubsidariesReload&&typeof this.panelSubsidariesReload == 'function'&&this.panelSubsidariesReload(true)
+        this.showNotificationForSubsidyChange(data.data);
+        return;
     }
   }
 
