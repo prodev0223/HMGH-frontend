@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Row, Col, Switch, Select, Typography, Calendar, Upload, Input } from 'antd';
+import { Modal, Button, Row, Col, Switch, Select, Typography, Calendar, Upload, Input , message } from 'antd';
 import { BiChevronLeft, BiChevronRight, BiUpload } from 'react-icons/bi';
 import { GoPrimitiveDot } from 'react-icons/go';
 import intl from 'react-intl-universal';
@@ -42,9 +42,8 @@ const arrTime = [
 
 class ModalReferralService extends React.Component {
     state = {
-        valueCalendar: moment(),
-        selectedValue: moment(),
-        currentMonth: moment().format('MMMM YYYY'),
+        // selectedValue: moment(),
+        // currentMonth: moment().format('MMMM YYYY'),
         isChoose: 0,
         isConfirm: false,
         isPopupComfirm: false,
@@ -57,6 +56,9 @@ class ModalReferralService extends React.Component {
         consulationPhoneNumber:undefined,
         meetLocation: undefined,
         meetSolution: undefined,
+        // selectedDate: moment(),
+        note: undefined,
+        subsidyId:undefined,
     }
 
     componentDidMount = () =>{
@@ -73,6 +75,8 @@ class ModalReferralService extends React.Component {
             consulationPhoneNumber:undefined,
             meetLocation: undefined,
             meetSolution: undefined,
+            note:undefined,
+            subsidyId:undefined,
         })
     }
 
@@ -80,6 +84,13 @@ class ModalReferralService extends React.Component {
         this.loadDefaultData();
         if(subsidy != undefined){
             console.log('subsidy',subsidy)
+            this.setState({
+                subsidyId: subsidy._id,
+                selectedSkillSet: subsidy.skillSet,
+                schoolInfo: subsidy.school,
+                selectedDependent: subsidy.student._id,
+                consulationPhoneNumber: subsidy.school.techContactRef[0],
+            })
         }else{
 
         }
@@ -100,6 +111,7 @@ class ModalReferralService extends React.Component {
         request.post('schools/get_school_info', {'schoolId': schoolId}).then(result=>{
             if(result.success){
                 this.setState({schoolInfo:result.data , consulationPhoneNumber: result.data.techContactRef[0]});
+
             }else{
                 this.setState({schoolInfo:undefined});
             }
@@ -109,60 +121,66 @@ class ModalReferralService extends React.Component {
         })
     }   
 
-    createConsulation(subsidy){
-        if(!this.state.consulationName || !this.state.selectedHour || !this.state.consulationPhoneNumber || !this.state.consulationPhoneNumber
-            || !this.state.consulationPhoneNumber.length <1
-            ||this.state.meetSolution == undefined
+    createConsulation =()=>{
+        if( !this.state.consulationPhoneNumber
+            || this.state.consulationPhoneNumber.length <1
+            ||this.state.meetSolution == undefined ||
+            this.state.isSelectTime < 0
             ){
+                console.log(this.state.consulationPhoneNumber 
+                    ,this.state.consulationPhoneNumber.length <1
+                    ,this.state.meetSolution == undefined ,
+                    this.state.isSelectTime < 0)
                 message.error('please fill all reuired field');
             return;
         }
-        if(!!subsidy.consulation){
-            this.editConsulation(subsidy);return;
-        }
-        var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + this.state.selectedHour;
+        
+        var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + arrTime[ this.state.isSelectTime ];
         // console.log(str)
         var _selectedDay = moment(str , 'DD/MM/YYYY hh:mm' ).valueOf();
         var postData = {
-            "subsidyId":subsidy._id ,
-            "dependent": this.state.selectedDependent._id,
+            "subsidyId":this.state.subsidyId ,
+            "dependent": this.state.selectedDependent,
             "skillSet":this.state.selectedSkillSet,
-            "school":this.state.school._id,
+            "school":this.state.schoolInfo._id,
             "typeForAppointLocation":this.state.meetSolution,
             "location":this.state.meetLocation,
             "date":_selectedDay,
             "phoneNumber": this.state.consulationPhoneNumber,
+            "addtionalDocuments":this.state.fileList.length>0?[this.state.fileList[0].response.data]:[],
+            "note":this.state.note,
         };
         
-        // console.log(postData);return;
+        console.log(postData);//return;
         request.post(switchPathWithRole(this.props.userRole)+'create_consulation_to_subsidy',postData).then(result=>{
             console.log('create_consulation_to_subsidy' , result)
             if(result.success){
-                this.loadSubsidyData(subsidy._id , false);
-                this.setState({isScheduling:false , consulationWarning:''});
+                !!this.callbackForReferral&&this.callbackForReferral()
+                this.props.onCancel();
             }else{
-
+                message.error('cannot create referral');
             }
         }).catch(err=>{
-            
+            console.log(err);
+            message.error('cannot create referral');
         })
     }
 
-    onSelectDate = (newValue) => {
-        this.setState({valueCalendar: newValue});
-        this.setState({selectedValue: newValue});
-    }
-    onPanelChange = (newValue) => {
-        this.setState({valueCalendar: newValue});
-    }
-    nextMonth = () => {
-        this.setState({selectedValue: moment(this.state.selectedValue).add(1, 'month')});
-        this.setState({valueCalendar: moment(this.state.selectedValue).add(1, 'month')});
-    }
-    prevMonth = () => {
-        this.setState({selectedValue: moment(this.state.selectedValue).add(-1, 'month')});
-        this.setState({valueCalendar: moment(this.state.selectedValue).add(-1, 'month')});
-    }
+    // onSelectDate = (newValue) => {
+    //     this.setState({selectedDate: newValue});
+    //     this.setState({selectedValue: newValue});
+    // }
+    // onPanelChange = (newValue) => {
+    //     this.setState({selectedDate: newValue});
+    // }
+    // nextMonth = () => {
+    //     this.setState({selectedValue: moment(this.state.selectedValue).add(1, 'month')});
+    //     this.setState({selectedDate: moment(this.state.selectedValue).add(1, 'month')});
+    // }
+    // prevMonth = () => {
+    //     this.setState({selectedValue: moment(this.state.selectedValue).add(-1, 'month')});
+    //     this.setState({selectedDate: moment(this.state.selectedValue).add(-1, 'month')});
+    // }
 
     onChooseDoctor = (index) => {
         this.setState({isChoose: index});
@@ -196,7 +214,7 @@ class ModalReferralService extends React.Component {
     }
 
     render() {
-        const { valueCalendar, selectedValue, isChoose, isSelectTime } = this.state;
+        const { selectedDate, selectedValue, isChoose, isSelectTime } = this.state;
 
         const contentConfirm = (
             <div className='confirm-content'>
@@ -237,7 +255,7 @@ class ModalReferralService extends React.Component {
             <Button key="back" onClick={this.props.onCancel}>
             {intl.formatMessage(msgReview.goBack).toUpperCase()}
             </Button>,
-            <Button key="submit" type="primary" onClick={this.props.onSubmit}>
+            <Button key="submit" type="primary" onClick={this.createConsulation}>
                 {intl.formatMessage(messages.scheduleConsultation).toUpperCase()}
             </Button>
         ]
@@ -265,6 +283,7 @@ class ModalReferralService extends React.Component {
                             <p className='font-16 mb-5'>{intl.formatMessage(messages.selectOptions)}</p>
                             <Select
                             value={this.state.selectedDependent}
+                            disabled={this.state.subsidyId!=undefined}
                             onChange={v=>{
                                 this.setState({selectedDependent:v});
                                 var selected = this.props.listDependents.find(x => x._id === v);
@@ -278,6 +297,7 @@ class ModalReferralService extends React.Component {
                         <Col xs={24} sm={24} md={8} className='select-small'>
                             <Select placeholder={intl.formatMessage(msgCreateAccount.skillsets)}
                             value={this.state.selectedSkillSet}
+                            disabled={this.state.subsidyId!=undefined}
                             onChange={v=>this.setState({selectedSkillSet:v})}
                             >
                                 {this.props.SkillSet.map((skill, index)=>(<Select.Option value={index}>{skill}</Select.Option>) )}
@@ -288,6 +308,7 @@ class ModalReferralService extends React.Component {
                             <Input 
                             placeholder={intl.formatMessage(msgCreateAccount.phoneNumber)}
                             value={this.state.consulationPhoneNumber}
+                            // disabled={this.state.subsidyId!=undefined}
                             onChange={v=>{
                                 this.setState({consulationPhoneNumber:v.target.value})
                             }}
@@ -313,6 +334,8 @@ class ModalReferralService extends React.Component {
                         <Col xs={24} sm={24} md={8}>
                             <div className='flex flex-row items-center mb-5'>
                             <Input 
+                            value={this.state.meetLocation}
+                            onChange={v=>{this.setState({meetLocation:v.target.value})}}
                             placeholder='Url or address for meeting'
                             size="small"  />
                             </div>
@@ -330,13 +353,18 @@ class ModalReferralService extends React.Component {
                                         </Button>
                                     </Upload>
                                 </div>
-                                <div className='profile-text'>
-                                    <Paragraph className='font-12 mb-0'>
+                                {/* <div className='profile-text'>
+                                    <Paragraph className='font-12 mb-0'
+                                    // onC
+                                    >
                                     Notes
                                     </Paragraph>
-                                </div>
+                                </div> */}
                                 {/* hoặc sử dụng textarea */}
-                                {/* <Input.TextArea rows={6} placeholder={intl.formatMessage(msgReview.notes)} className='font-12'/> */}
+                                <Input.TextArea 
+                                value={this.state.note}
+                                onChange={v=>{this.setState({note:v.target.value})}}
+                                rows={6} placeholder={intl.formatMessage(msgReview.notes)} className='font-12'/>
 
                             </div>
                         </Col>
@@ -349,9 +377,13 @@ class ModalReferralService extends React.Component {
                                         <Col xs={24} sm={24} md={12}>
                                             <Calendar 
                                                 fullscreen={false} 
-                                                value={valueCalendar} 
+                                                // value={selectedDate} 
                                                 onSelect={this.onSelectDate} 
                                                 onPanelChange={this.onPanelChange}
+                                                value={this.state.selectedDate}
+                                                onChange={v=>{
+                                                    this.setState({selectedDate:v})
+                                                }}
                                                 headerRender={() => {
                                                 return (
                                                     <div style={{ marginBottom: 10 }}>

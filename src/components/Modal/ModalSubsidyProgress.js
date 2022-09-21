@@ -48,6 +48,7 @@ class ModalSubsidyProgress extends React.Component {
         priceForSession:undefined,
         parentWarning:'',
         consulationWarning:'',
+        referral:{},
     }
 
     componentDidMount = () => {
@@ -133,8 +134,20 @@ class ModalSubsidyProgress extends React.Component {
         })
     }
 
-    loadLastReferral = (subsidyId) =>{
-
+    loadLastReferral = () =>{
+        this.setState({referral:{}});
+        console.log('sub id ' , this.state.subsidy._id);
+        request.post('schools/get_last_consulation',{subsidyId:this.state.subsidy._id}).then(result=>{
+            if(result.success){
+                console.log('get_last_consulation',result.data)
+                this.setState({referral: result.data});
+                
+            }else{
+                this.setState({referral:{}});
+            }
+        }).catch(err=>{
+            this.setState({referral:{}});
+        })
     }
 
     clearData = () =>{
@@ -156,6 +169,7 @@ class ModalSubsidyProgress extends React.Component {
             selectProviderFromAdmin:undefined,
             numberOfSessions:undefined,
             priceForSession:undefined,
+            referral: {},
         });
 
     }
@@ -211,78 +225,78 @@ class ModalSubsidyProgress extends React.Component {
         })
     }
 
-    createConsulation(subsidy){
-        if(!this.state.consulationName || !this.state.selectedHour || !this.state.consulationPhoneNumber || !this.state.consulationPhoneNumber
-            || !this.state.consulationPhoneNumber.length <1
-            ||this.state.meetSolution == undefined
-            ){
-                message.error('please fill all reuired field');
-            return;
-        }
-        if(!!subsidy.consulation){
-            this.editConsulation(subsidy);return;
-        }
-        var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + this.state.selectedHour;
-        // console.log(str)
-        var _selectedDay = moment(str , 'DD/MM/YYYY hh:mm' ).valueOf();
-        var postData = {
-            "subsidyId":subsidy._id ,
-            "dependent": subsidy.student._id,
-            "skillSet":subsidy.skillSet,
-            "school":subsidy.school._id,
-            "name":this.state.consulationName,
-            "typeForAppointLocation":this.state.meetSolution,
-            "location":this.state.meetLocation,
-            "date":_selectedDay,
-            "phoneNumber": this.state.consulationPhoneNumber,
-        };
+    // createConsulation(subsidy){
+    //     if(!this.state.consulationName || !this.state.selectedHour || !this.state.consulationPhoneNumber || !this.state.consulationPhoneNumber
+    //         || !this.state.consulationPhoneNumber.length <1
+    //         ||this.state.meetSolution == undefined
+    //         ){
+    //             message.error('please fill all reuired field');
+    //         return;
+    //     }
+    //     if(!!subsidy.consulation){
+    //         this.editConsulation(subsidy);return;
+    //     }
+    //     var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + this.state.selectedHour;
+    //     // console.log(str)
+    //     var _selectedDay = moment(str , 'DD/MM/YYYY hh:mm' ).valueOf();
+    //     var postData = {
+    //         "subsidyId":subsidy._id ,
+    //         "dependent": subsidy.student._id,
+    //         "skillSet":subsidy.skillSet,
+    //         "school":subsidy.school._id,
+    //         "name":this.state.consulationName,
+    //         "typeForAppointLocation":this.state.meetSolution,
+    //         "location":this.state.meetLocation,
+    //         "date":_selectedDay,
+    //         "phoneNumber": this.state.consulationPhoneNumber,
+    //     };
         
-        // console.log(postData);return;
-        request.post(switchPathWithRole(this.props.userRole)+'create_consulation_to_subsidy',postData).then(result=>{
-            console.log('create_consulation_to_subsidy' , result)
-            if(result.success){
-                this.loadSubsidyData(subsidy._id , false);
-                this.setState({isScheduling:false , consulationWarning:''});
-            }else{
+    //     // console.log(postData);return;
+    //     request.post(switchPathWithRole(this.props.userRole)+'create_consulation_to_subsidy',postData).then(result=>{
+    //         console.log('create_consulation_to_subsidy' , result)
+    //         if(result.success){
+    //             this.loadSubsidyData(subsidy._id , false);
+    //             this.setState({isScheduling:false , consulationWarning:''});
+    //         }else{
 
-            }
-        }).catch(err=>{
+    //         }
+    //     }).catch(err=>{
             
-        })
-    }
+    //     })
+    // }
 
-    editConsulation(subsidy){
-        if(!this.state.consulationName || !this.state.selectedHour || !this.state.consulationPhoneNumber || !this.state.consulationPhoneNumber
-            || !this.state.consulationPhoneNumber.length <1
-            ||this.state.meetSolution == undefined
-            ){
-                message.error('please fill all reuired field');
-            return;
-        }
-        var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + this.state.selectedHour;
-        // console.log(str)
-        var _selectedDay = moment(str , 'DD/MM/YYYY hh:mm' ).valueOf();
-        var postData = {
-            "consulationId": subsidy.consulation._id,
-            "name":this.state.consulationName,
-            "typeForAppointLocation":this.state.meetSolution,
-            "location":this.state.meetLocation,
-            "date":_selectedDay,
-            "phoneNumber": this.state.consulationPhoneNumber,
-        }
-        console.log(postData);
-        request.post(switchPathWithRole(this.props.userRole)+'change_consulation',postData).then(result=>{
-            console.log('change_consulation' , result)
-            if(result.success){
-                this.loadSubsidyData(subsidy._id , false);
-                this.setState({isScheduling:false, consulationWarning:''});
-            }else{
+    // editConsulation(subsidy){
+    //     if(!this.state.consulationName || !this.state.selectedHour || !this.state.consulationPhoneNumber || !this.state.consulationPhoneNumber
+    //         || !this.state.consulationPhoneNumber.length <1
+    //         ||this.state.meetSolution == undefined
+    //         ){
+    //             message.error('please fill all reuired field');
+    //         return;
+    //     }
+    //     var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + this.state.selectedHour;
+    //     // console.log(str)
+    //     var _selectedDay = moment(str , 'DD/MM/YYYY hh:mm' ).valueOf();
+    //     var postData = {
+    //         "consulationId": subsidy.consulation._id,
+    //         "name":this.state.consulationName,
+    //         "typeForAppointLocation":this.state.meetSolution,
+    //         "location":this.state.meetLocation,
+    //         "date":_selectedDay,
+    //         "phoneNumber": this.state.consulationPhoneNumber,
+    //     }
+    //     console.log(postData);
+    //     request.post(switchPathWithRole(this.props.userRole)+'change_consulation',postData).then(result=>{
+    //         console.log('change_consulation' , result)
+    //         if(result.success){
+    //             this.loadSubsidyData(subsidy._id , false);
+    //             this.setState({isScheduling:false, consulationWarning:''});
+    //         }else{
 
-            }
-        }).catch(err=>{
+    //         }
+    //     }).catch(err=>{
             
-        })
-    }
+    //     })
+    // }
 
     submitSubsidyFromAdmin =(subsidy)=>{
         var postData = {
@@ -344,9 +358,7 @@ class ModalSubsidyProgress extends React.Component {
     }
 
     callbackReferral(appoiment){
-        this.setState({
-
-        })
+        this.loadLastReferral();
         // consulationDate:undefined,
         // consulationTime:undefined,
         // consulationPhoneNumber:undefined,
@@ -568,13 +580,14 @@ class ModalSubsidyProgress extends React.Component {
     }
 
     renderConsulation = (subsidy) =>{
+        const {referral} = this.state;
         if(subsidy.status == 1){
             
             return (<div className='consulation-appoint'>
-                <div className='flex flex-row justify-between'>
+                {/* <div className='flex flex-row justify-between'>
                 <p className='font-20 font-700 mb-10'>{intl.formatMessage(messages.consulationAppointment)}</p>
-                {/* {this.renderButtonsForConsulation(subsidy)} */}
-            </div>
+                {this.renderButtonsForConsulation(subsidy)}
+            </div> */}
                 {/* {(!subsidy.consulation||this.state.isScheduling)&&<Row gutter={20} align='bottom'>
                 <Col xs={24} sm={24} md={10}>
                     
@@ -673,22 +686,22 @@ class ModalSubsidyProgress extends React.Component {
 
                 <Col xs={24} sm={24} md={10}>
                     <p className='font-20 font-700'>{intl.formatMessage(messages.consulationAppointment)}</p>
-                    <p className='font-700'>{intl.formatMessage(messages.consultant)}: <span className='text-uppercase'>{this.state.consulationName}</span></p>
+                    {/* <p className='font-700'>{intl.formatMessage(messages.consultant)}: <span className='text-uppercase'>{this.state.consulationName}</span></p> */}
                 </Col>
                 <Col xs={24} sm={24} md={14}>
                     <div className='flex flex-row justify-between'>
-                        <p><span className='font-700'>{arrMeetSolution[this.state.meetSolution??0]}</span>: <a>{this.state.meetLocation}</a></p>
+                        <p><span className='font-700'>{referral.typeForAppointLocation!=undefined? arrMeetSolution[referral.typeForAppointLocation]:''}</span>: <a>{referral.location}</a></p>
                         <div className='flex flex-row items-center'>
                             <a className='text-primary'
                             onClick={()=>{
-                                this.setState({isScheduling:true})
+                                !!this.props.openReferral&&this.props.openReferral(this.state.subsidy , this.loadLastReferral);
                             }}
                             ><FaRegCalendarAlt/>{intl.formatMessage(messages.reSchedule)}</a>
                         </div>
                     </div>
                     <div className='flex flex-row justify-between'>
-                        <p><span className='font-700'>{intl.formatMessage(messages.dateTime)}</span>: {moment(this.state.selectedDate).format('YYYY-MM-DD') } | {this.state.selectedHour}</p>
-                        <p><span className='font-700'>{intl.formatMessage(messages.phone)}</span>: {this.state.consulationPhoneNumber}</p>
+                        <p><span className='font-700'>{intl.formatMessage(messages.dateTime)}</span>: {referral.date!=undefined?moment(referral.date).format('YYYY-MM-DD'):'' } | {referral.date!=undefined?moment(referral.date).format('HH:mm A'):'' }</p>
+                        <p><span className='font-700'>{intl.formatMessage(messages.phone)}</span>: {referral.phoneNumber}</p>
                     </div>
                 </Col>
         </div>)

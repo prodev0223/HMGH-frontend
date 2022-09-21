@@ -289,7 +289,10 @@ export default class extends React.Component {
 
   loadDependentForSchool = () =>{
     request.post('schools/get_my_dependents').then(result=>{
-        this.setState({listDependents:data})
+      if(result.success){
+        this.setState({listDependents:result.data})
+      }
+        
     })
   }
 
@@ -400,6 +403,9 @@ export default class extends React.Component {
 
   onShowModalReferral = (subsidy , callbackForReload  ) => {
     this.setState({ visiblReferralService: true });
+    if(callbackForReload == undefined){
+      callbackForReload = this.panelAppoimentsReload;
+    }
     !!this.loadDataModalReferral&&this.loadDataModalReferral(subsidy , callbackForReload);
   };
 
@@ -612,6 +618,9 @@ export default class extends React.Component {
       >
         <PanelAppointment
           userRole={this.state.userRole}
+          setReload={reload => {
+            this.panelAppoimentsReload = reload;
+          }}
         />
       </Panel>);
   }
