@@ -75,24 +75,24 @@ class ModalSubsidyProgress extends React.Component {
                 }
 
                 // set consulation
-                if(!!result.data.consulation){
-                    console.log('consulation',result.data.consulation)
-                    var consulation= result.data.consulation;
-                    var _moment = moment( consulation.date);
-                    var date = _moment.clone();
-                    var hour = _moment.format('HH:mm');
-                    console.log(date, hour)
-                    this.setState({
-                        consulationName:consulation.name,
-                        meetSolution:consulation.typeForAppointLocation,
-                        meetLocation:consulation.location,
-                        consulationDate:date,
-                        consulationTime:hour,
-                        selectedDate: date,
-                        selectedHour: hour,
-                        consulationPhoneNumber:consulation.phoneNumber,
-                    })
-                }
+                // if(!!result.data.consulation){
+                //     console.log('consulation',result.data.consulation)
+                //     var consulation= result.data.consulation;
+                //     var _moment = moment( consulation.date);
+                //     var date = _moment.clone();
+                //     var hour = _moment.format('HH:mm');
+                //     console.log(date, hour)
+                //     this.setState({
+                //         consulationName:consulation.name,
+                //         meetSolution:consulation.typeForAppointLocation,
+                //         meetLocation:consulation.location,
+                //         consulationDate:date,
+                //         consulationTime:hour,
+                //         selectedDate: date,
+                //         selectedHour: hour,
+                //         consulationPhoneNumber:consulation.phoneNumber,
+                //     })
+                // }
 
                 if(!!result.data.selectedProvider){
                     this.setState({
@@ -101,6 +101,8 @@ class ModalSubsidyProgress extends React.Component {
                         priceForSession:result.data.priceForSession,
                     })
                 }
+
+                this.loadLastReferral();
 
                 if(isNeedLoadSchool){
                     this.loadProvidersInSchool(result.data.school._id);
@@ -129,6 +131,10 @@ class ModalSubsidyProgress extends React.Component {
         }).catch(err=>{
             this.setState({providers:[]});
         })
+    }
+
+    loadLastReferral = (subsidyId) =>{
+
     }
 
     clearData = () =>{
@@ -323,7 +329,11 @@ class ModalSubsidyProgress extends React.Component {
     }
 
     openHierachy(subsidy){
-        this.props.openHierachy&&this.props.openHierachy(subsidy , this.callbackHierachy);
+        !!this.props.openHierachy&&this.props.openHierachy(subsidy , this.callbackHierachy);
+    }
+
+    openReferral(){
+        !!this.props.openReferral&& this.props.openReferral(subsidy , this.callbackReferral );
     }
 
     callbackHierachy = (hierachyId) =>{
@@ -331,6 +341,15 @@ class ModalSubsidyProgress extends React.Component {
         const {subsidy} = this.state;
         subsidy.hierachy = hierachyId
         this.setState({subsidy:subsidy});
+    }
+
+    callbackReferral(appoiment){
+        this.setState({
+
+        })
+        // consulationDate:undefined,
+        // consulationTime:undefined,
+        // consulationPhoneNumber:undefined,
     }
 
     nextStep = () => {
@@ -554,9 +573,9 @@ class ModalSubsidyProgress extends React.Component {
             return (<div className='consulation-appoint'>
                 <div className='flex flex-row justify-between'>
                 <p className='font-20 font-700 mb-10'>{intl.formatMessage(messages.consulationAppointment)}</p>
-                {this.renderButtonsForConsulation(subsidy)}
+                {/* {this.renderButtonsForConsulation(subsidy)} */}
             </div>
-                {(!subsidy.consulation||this.state.isScheduling)&&<Row gutter={20} align='bottom'>
+                {/* {(!subsidy.consulation||this.state.isScheduling)&&<Row gutter={20} align='bottom'>
                 <Col xs={24} sm={24} md={10}>
                     
                     <Input placeholder='name of consulation' className='mb-10'
@@ -650,9 +669,28 @@ class ModalSubsidyProgress extends React.Component {
                         <p><span className='font-700'>{intl.formatMessage(messages.phone)}</span>: {this.state.consulationPhoneNumber}</p>
                     </div>
                 </Col>
-                </Row>}
+                </Row>} */}
 
-            
+                <Col xs={24} sm={24} md={10}>
+                    <p className='font-20 font-700'>{intl.formatMessage(messages.consulationAppointment)}</p>
+                    <p className='font-700'>{intl.formatMessage(messages.consultant)}: <span className='text-uppercase'>{this.state.consulationName}</span></p>
+                </Col>
+                <Col xs={24} sm={24} md={14}>
+                    <div className='flex flex-row justify-between'>
+                        <p><span className='font-700'>{arrMeetSolution[this.state.meetSolution??0]}</span>: <a>{this.state.meetLocation}</a></p>
+                        <div className='flex flex-row items-center'>
+                            <a className='text-primary'
+                            onClick={()=>{
+                                this.setState({isScheduling:true})
+                            }}
+                            ><FaRegCalendarAlt/>{intl.formatMessage(messages.reSchedule)}</a>
+                        </div>
+                    </div>
+                    <div className='flex flex-row justify-between'>
+                        <p><span className='font-700'>{intl.formatMessage(messages.dateTime)}</span>: {moment(this.state.selectedDate).format('YYYY-MM-DD') } | {this.state.selectedHour}</p>
+                        <p><span className='font-700'>{intl.formatMessage(messages.phone)}</span>: {this.state.consulationPhoneNumber}</p>
+                    </div>
+                </Col>
         </div>)
         
         }

@@ -12,9 +12,33 @@ import moment from 'moment';
 
 import './style/index.less';
 import '../../assets/styles/login.less';
+import {url , switchPathWithRole} from '../../utils/api/baseUrl'
+import request,{generateSearchStructure} from '../../utils/api/request'
 const { Paragraph } = Typography;
 import 'moment/locale/en-au'; 
 moment.locale('en');
+
+const arrMeetSolution = [
+    'Google meet',
+    'Zoom',
+    'Direction',
+]
+
+const arrTime = [
+    "8:30am",
+    "9:00am",
+"9:30am",
+"10:30am",
+"11:00am",
+"11:30am",
+"1:30pm",
+"2:00pm",
+"2:30pm",
+"3:00pm",
+"3:30pm",
+"4:00pm",
+"4:30pm",
+"5:00pm",];
 
 class ModalReferralService extends React.Component {
     state = {
@@ -27,7 +51,103 @@ class ModalReferralService extends React.Component {
         isSelectTime: -1,
         fileList: [],
         uploading: false,
+        selectedDependent:undefined,
+        selectedSkillSet: undefined,
+        schoolInfo:undefined,
+        consulationPhoneNumber:undefined,
+        meetLocation: undefined,
+        meetSolution: undefined,
     }
+
+    componentDidMount = () =>{
+        this.props.setLoadData( this.loadDataForReferralFromSubsidy );
+    }
+
+    loadDefaultData(){
+        this.setState({
+            fileList: [],
+            uploading: false,
+            selectedDependent:undefined,
+            selectedSkillSet: undefined,
+            schoolInfo:undefined,
+            consulationPhoneNumber:undefined,
+            meetLocation: undefined,
+            meetSolution: undefined,
+        })
+    }
+
+    loadDataForReferralFromSubsidy = (subsidy , callback) =>{
+        this.loadDefaultData();
+        if(subsidy != undefined){
+            console.log('subsidy',subsidy)
+        }else{
+
+        }
+        if(callback!= undefined){
+            this.callbackForReferral = callback
+        }else{
+            this.callbackForReferral = undefined;
+        }
+        
+    }
+
+    loadDataForSelectedDependent(dependent){
+        console.log('schoolid ', dependent.school)
+        var schoolId = dependent.school._id || dependent.school;
+        if(!!this.state.schoolInfo&&schoolId==this.state.schoolInfo._id){
+            return;
+        }
+        request.post('schools/get_school_info', {'schoolId': schoolId}).then(result=>{
+            if(result.success){
+                this.setState({schoolInfo:result.data , consulationPhoneNumber: result.data.techContactRef[0]});
+            }else{
+                this.setState({schoolInfo:undefined});
+            }
+        }).catch(err=>{
+            console.log(err);
+            this.setState({schoolInfo:undefined});
+        })
+    }   
+
+    createConsulation(subsidy){
+        if(!this.state.consulationName || !this.state.selectedHour || !this.state.consulationPhoneNumber || !this.state.consulationPhoneNumber
+            || !this.state.consulationPhoneNumber.length <1
+            ||this.state.meetSolution == undefined
+            ){
+                message.error('please fill all reuired field');
+            return;
+        }
+        if(!!subsidy.consulation){
+            this.editConsulation(subsidy);return;
+        }
+        var str = this.state.selectedDate.format("DD/MM/YYYY")+ " " + this.state.selectedHour;
+        // console.log(str)
+        var _selectedDay = moment(str , 'DD/MM/YYYY hh:mm' ).valueOf();
+        var postData = {
+            "subsidyId":subsidy._id ,
+            "dependent": this.state.selectedDependent._id,
+            "skillSet":this.state.selectedSkillSet,
+            "school":this.state.school._id,
+            "typeForAppointLocation":this.state.meetSolution,
+            "location":this.state.meetLocation,
+            "date":_selectedDay,
+            "phoneNumber": this.state.consulationPhoneNumber,
+        };
+        
+        // console.log(postData);return;
+        request.post(switchPathWithRole(this.props.userRole)+'create_consulation_to_subsidy',postData).then(result=>{
+            console.log('create_consulation_to_subsidy' , result)
+            if(result.success){
+                this.loadSubsidyData(subsidy._id , false);
+                this.setState({isScheduling:false , consulationWarning:''});
+            }else{
+
+            }
+        }).catch(err=>{
+            
+        })
+    }
+
     onSelectDate = (newValue) => {
         this.setState({valueCalendar: newValue});
         this.setState({selectedValue: newValue});
@@ -55,16 +175,26 @@ class ModalReferralService extends React.Component {
         this.setState({isSelectTime: index})
     }
     onChangeUpload = (info) => {
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
+        
+        if(info.file.status =='removed'){
+            this.setState({fileList:[]})
+            return;
+        }
+        if (info.file.status == 'done') {
+        //   console.log(info.file, info.fileList);
           this.setState(prevState => ({
-            fileList: [...prevState.fileList, info.file],
+            fileList: info.fileList,
           }));
-          this.form?.setFieldsValue({
-            documents: info.fileList[0].name
-          })
+        //   this.form?.setFieldsValue({
+        //     documents: info.fileList[0].name
+        //   })
         }
     }
+
+    isSameId = (id , _id)=>{
+        return id = _id;
+    }
+
     render() {
         const { valueCalendar, selectedValue, isChoose, isSelectTime } = this.state;
 
@@ -115,12 +245,12 @@ class ModalReferralService extends React.Component {
 
         const props = {
             name: 'file',
-            action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+            action: url+"clients/upload_document",
             headers: {
             authorization: 'authorization-text',
             },
             onChange: this.onChangeUpload,
-            // maxCount: 1,
+            maxCount: 1,
             // showUploadList: false 
         };
         return(
@@ -133,22 +263,59 @@ class ModalReferralService extends React.Component {
                     <Row gutter={20} className='mb-20' align="bottom">
                         <Col xs={24} sm={24} md={8} className='select-small'>
                             <p className='font-16 mb-5'>{intl.formatMessage(messages.selectOptions)}</p>
-                            <Select defaultValue='d1'>
-                                <Select.Option value='d1'>&#123;Current Dependent&#125;</Select.Option>
+                            <Select
+                            value={this.state.selectedDependent}
+                            onChange={v=>{
+                                this.setState({selectedDependent:v});
+                                var selected = this.props.listDependents.find(x => x._id === v);
+                                this.loadDataForSelectedDependent(selected);
+                            }}
+                             >
+                                {this.props.listDependents.map((dependent,index)=>(<Select.Option value={dependent._id}>{dependent.firstName} {dependent.lastName}</Select.Option>))}
+                                
                             </Select>
                         </Col>
                         <Col xs={24} sm={24} md={8} className='select-small'>
-                            <Select placeholder={intl.formatMessage(msgCreateAccount.skillsets)}>
-                                <Select.Option value='l1'>level 1</Select.Option>
+                            <Select placeholder={intl.formatMessage(msgCreateAccount.skillsets)}
+                            value={this.state.selectedSkillSet}
+                            onChange={v=>this.setState({selectedSkillSet:v})}
+                            >
+                                {this.props.SkillSet.map((skill, index)=>(<Select.Option value={index}>{skill}</Select.Option>) )}
+                            </Select>
+                        </Col>
+                        <Col xs={24} sm={24} md={8}>
+                            
+                            <Input 
+                            placeholder={intl.formatMessage(msgCreateAccount.phoneNumber)}
+                            value={this.state.consulationPhoneNumber}
+                            onChange={v=>{
+                                this.setState({consulationPhoneNumber:v.target.value})
+                            }}
+                            size="small" />
+                        </Col>
+                    </Row>
+
+                    <Row gutter={20} className='mb-20' align="bottom">
+                        <Col xs={24} sm={24} md={8} >
+                            <div >{intl.formatMessage(messages.subsidyOnly)}<Switch size="small" defaultChecked /></div>
+                            
+                        </Col>
+                        <Col xs={24} sm={24} md={8} className='select-small'>
+                            <Select placeholder='Meet Solution'
+                            onChange={v=>{
+                                this.setState({meetSolution:v})
+                            }}
+                            value={this.state.meetSolution}
+                            >
+                            {arrMeetSolution.map((value, index)=><Select.Option value={index}>{value}</Select.Option>)}
                             </Select>
                         </Col>
                         <Col xs={24} sm={24} md={8}>
                             <div className='flex flex-row items-center mb-5'>
-                                <p className='mr-10 mb-0'>{intl.formatMessage(messages.subsidyOnly)}</p>
-                                <Switch size="small" defaultChecked />
-                                <p className='ml-10 mb-0'>Google Meet</p>
+                            <Input 
+                            placeholder='Url or address for meeting'
+                            size="small"  />
                             </div>
-                            <Input size="small" defaultValue='{AUTOFILL DEFAULT Phone#}' />
                         </Col>
                     </Row>
 
@@ -214,9 +381,9 @@ class ModalReferralService extends React.Component {
                                         </Col>
                                         <Col xs={24} sm={24} md={12}>
                                         <Row gutter={15}>
-                                                {Array(10).fill(null).map((_, index) =><Col key={index} span={12}>
+                                                {arrTime.map((time, index) =><Col key={index} span={12}>
                                                     <div className={isSelectTime === index ? 'time-available active' : 'time-available'} onClick={() => this.onSelectTime(index)}>
-                                                        <p className='font-12 mb-0'><GoPrimitiveDot size={15} />10:30am</p>
+                                                        <p className='font-12 mb-0'><GoPrimitiveDot size={15} />{time}</p>
                                                     </div>
                                                 </Col>)}
                                         </Row>
