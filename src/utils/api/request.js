@@ -55,4 +55,16 @@ export function generateSearchStructure(search = "" ,filter = {} , page= 1 , lim
     }
 }
 
+export function generateSearchStructureWithPopulateSearch(search = "" ,filter = {} , page= 1 , limit=10 , populate = {}){
+    return {
+        "data":{
+            "search":search,
+            "filter":filter,
+            "page":page,
+            "limit":limit,
+            "populate":populate,
+        }
+    }
+}
+
 export default instance;
